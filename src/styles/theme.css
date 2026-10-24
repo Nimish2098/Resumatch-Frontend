@@ -1,0 +1,140 @@
+
+/* ResuMatch global theme overrides */
+
+:root {
+  --color-smoky-black: #11120D;
+  --color-olive-drab: #565449;
+  --color-bone: #D8CFBC;
+  --color-floral-white: #FFFBF4;
+
+  /* Map existing theme variables */
+  --color-ink: var(--color-smoky-black);
+  --color-copy: var(--color-smoky-black);
+  --color-muted: var(--color-olive-drab);
+  --color-panel: var(--color-floral-white);
+  --color-border: var(--color-bone);
+  --color-accent: var(--color-olive-drab);
+  --home-accent: var(--color-olive-drab);
+}
+
+/* Main application */
+body,
+.content-area,
+.home-page-shell {
+  background: var(--color-floral-white);
+  color: var(--color-smoky-black);
+}
+
+.page-shell {
+  color: var(--color-smoky-black);
+}
+
+/* Navigation */
+.authenticated-header,
+.topbar {
+  background: var(--color-floral-white);
+  border-color: var(--color-bone);
+}
+
+.brand-mark,
+.page-header h2,
+.panel h3,
+.card h3 {
+  color: var(--color-smoky-black);
+}
+
+.nav-link,
+.authenticated-nav .nav-link {
+  color: var(--color-olive-drab);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: var(--color-bone);
+  color: var(--color-smoky-black);
+}
+
+/* Cards and panels */
+.auth-panel,
+.panel,
+.card,
+.table-panel,
+.metric-card,
+.sample-card {
+  background: var(--color-floral-white);
+  border-color: var(--color-bone);
+  color: var(--color-smoky-black);
+  box-shadow: none;
+}
+
+/* Typography */
+.muted,
+.eyebrow,
+.small-label,
+.document-snippet,
+.meta-row {
+  color: var(--color-olive-drab);
+}
+
+/* Form fields */
+label {
+  color: var(--color-smoky-black);
+}
+
+input,
+textarea {
+  background: #FFFFFF;
+  color: var(--color-smoky-black);
+  border-color: var(--color-bone);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--color-olive-drab);
+  outline-color: var(--color-olive-drab);
+}
+
+/* Buttons */
+.primary-button {
+  background: var(--color-olive-drab);
+  color: var(--color-floral-white);
+}
+
+.primary-button:hover {
+  background: var(--color-smoky-black);
+  color: var(--color-floral-white);
+}
+
+.secondary-button,
+.toggle-row {
+  background: var(--color-bone);
+  color: var(--color-smoky-black);
+}
+
+/* Analysis score and tables */
+.score-card {
+  background: var(--color-bone);
+  border-color: var(--color-bone);
+  color: var(--color-smoky-black);
+}
+
+.score-label {
+  color: var(--color-olive-drab);
+}
+
+.table-panel th {
+  background: var(--color-bone);
+  color: var(--color-smoky-black);
+}
+
+.table-panel th,
+.table-panel td,
+.version-item {
+  border-color: var(--color-bone);
+}
+
+.empty-state {
+  background: #FFFFFF;
+  border-color: var(--color-bone);
+  color: var(--color-olive-drab);
+}
