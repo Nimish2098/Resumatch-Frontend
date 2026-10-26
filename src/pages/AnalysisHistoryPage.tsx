@@ -2,10 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { apiFetch } from '../api/apiFetch'
 import { formatDate } from '../utils/format'
 import type { AnalysisResult } from '../types'
+import './AnalysisHistoryPage.css'
 
 type AnalysisHistoryPageProps = {
   token: string
 }
+
+const clean = (value: string) => value.replaceAll('_', ' ')
 
 export default function AnalysisHistoryPage({ token }: AnalysisHistoryPageProps) {
   const [reports, setReports] = useState<AnalysisResult[]>([])
@@ -54,42 +57,46 @@ export default function AnalysisHistoryPage({ token }: AnalysisHistoryPageProps)
   }
 
   return (
-    <div className="page-shell">
-      <div className="page-header">
+    <div className="page-shell ah-page">
+      <header className="ah-header">
         <div>
-          <p className="eyebrow">Saved reports</p>
+          <p className="ah-status"><span aria-hidden="true" /> SAVED REPORTS</p>
           <h2>Analysis history</h2>
         </div>
-        <button type="button" className="secondary-button" onClick={() => void loadHistory()} disabled={loading}>
+        <button type="button" className="ah-btn" onClick={() => void loadHistory()} disabled={loading}>
           Refresh
         </button>
-      </div>
+      </header>
 
-      {error ? <div className="inline-banner" role="alert">{error}</div> : null}
+      {error ? <div className="ah-error" role="alert">{error}</div> : null}
 
       {loading ? (
-        <div className="empty-state compact"><h3>Loading reports…</h3></div>
+        <div className="ah-empty"><p className="ah-label">LOADING REPORTS…</p></div>
       ) : reports.length === 0 ? (
-        <div className="empty-state compact">
+        <div className="ah-empty">
+          <p className="ah-label">NOTHING SAVED YET</p>
           <h3>No saved analyses yet</h3>
           <p>Run an analysis while signed in and it will appear here.</p>
         </div>
       ) : (
-        <div className="table-panel">
-          <table>
+        <div className="ah-table-wrap">
+          <table className="ah-table">
             <thead>
               <tr><th>Resume</th><th>Score</th><th>Created</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {reports.map((report) => (
                 <tr key={report.id}>
-                  <td>{report.originalFilename}</td>
-                  <td>{report.overallScore}% · {report.scoreLabel}</td>
+                  <td className="ah-file">{report.originalFilename}</td>
+                  <td>
+                    <span className="ah-score">{report.overallScore}%</span>
+                    <span className="ah-score-label">{clean(report.scoreLabel)}</span>
+                  </td>
                   <td>{formatDate(report.createdAt)}</td>
                   <td>
-                    <div className="mini-actions">
-                      <button type="button" className="secondary-button" onClick={() => report.id !== null && void openReport(report.id)}>Open</button>
-                      <button type="button" className="danger-button" onClick={() => report.id !== null && void deleteReport(report.id)}>Delete</button>
+                    <div className="ah-actions">
+                      <button type="button" className="ah-btn" onClick={() => report.id !== null && void openReport(report.id)}>Open</button>
+                      <button type="button" className="ah-btn ah-btn-danger" onClick={() => report.id !== null && void deleteReport(report.id)}>Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -100,61 +107,74 @@ export default function AnalysisHistoryPage({ token }: AnalysisHistoryPageProps)
       )}
 
       {selectedReport ? (
-        <div className="panel">
-          <div className="page-header narrow-header">
+        <section className="ah-detail" aria-label="Report detail">
+          <div className="ah-detail-head">
             <div>
-              <p className="eyebrow">Report detail</p>
-              <h3>{selectedReport.originalFilename} · {selectedReport.overallScore}%</h3>
+              <p className="ah-label">REPORT DETAIL</p>
+              <h3>{selectedReport.originalFilename} · <b>{selectedReport.overallScore}%</b></h3>
             </div>
-            <button type="button" className="secondary-button" onClick={() => setSelectedReport(null)}>Close</button>
+            <button type="button" className="ah-btn" onClick={() => setSelectedReport(null)}>Close</button>
           </div>
-          <section className="analysis-details">
-            <h3>Summary</h3>
+
+          <div className="ah-section">
+            <h4>Summary</h4>
             <p>{selectedReport.report.summary}</p>
-          </section>
+          </div>
+
           {selectedReport.report.parameters.length > 0 ? (
-            <section className="analysis-details">
-              <h3>Score breakdown</h3>
-              {selectedReport.report.parameters.map((parameter) => (
-                <div key={parameter.parameter}>
-                  <strong>{parameter.parameter.replaceAll('_', ' ')} · {parameter.score}%</strong>
-                  <p>{parameter.summary}</p>
-                </div>
-              ))}
-            </section>
+            <div className="ah-section">
+              <h4>Score breakdown</h4>
+              <div>
+                {selectedReport.report.parameters.map((parameter) => (
+                  <div className="ah-entry" key={parameter.parameter}>
+                    <p><strong>{clean(parameter.parameter)} · {parameter.score}%</strong></p>
+                    <p>{parameter.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : null}
+
           {selectedReport.report.issues.map((issue, index) => (
-            <section className="analysis-details" key={`${issue.parameter}-${index}`}>
-              <h3>{issue.parameter.replaceAll('_', ' ')}</h3>
-              <p>{issue.problem}</p>
-              <p><strong>Fix:</strong> {issue.fix}</p>
-              {issue.rewrite ? <p><strong>Suggested rewrite:</strong> {issue.rewrite}</p> : null}
-            </section>
+            <div className="ah-section" key={`${issue.parameter}-${index}`}>
+              <h4>{clean(issue.parameter)}</h4>
+              <div>
+                <p>{issue.problem}</p>
+                <p><strong>Fix:</strong> {issue.fix}</p>
+                {issue.rewrite ? <p><strong>Suggested rewrite:</strong> {issue.rewrite}</p> : null}
+              </div>
+            </div>
           ))}
+
           {selectedReport.report.missingMaterial.length > 0 ? (
-            <section className="analysis-details">
-              <h3>Missing material</h3>
-              {selectedReport.report.missingMaterial.map((item) => (
-                <div key={item.type}>
-                  <strong>{item.type.replaceAll('_', ' ')}</strong>
-                  <p>{item.whyItMatters}</p>
-                  <p><strong>How to add it:</strong> {item.howToAdd}</p>
-                </div>
-              ))}
-            </section>
+            <div className="ah-section">
+              <h4>Missing material</h4>
+              <div>
+                {selectedReport.report.missingMaterial.map((item) => (
+                  <div className="ah-entry" key={item.type}>
+                    <p><strong>{clean(item.type)}</strong></p>
+                    <p>{item.whyItMatters}</p>
+                    <p><strong>How to add it:</strong> {item.howToAdd}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : null}
+
           {selectedReport.report.actionPlan.length > 0 ? (
-            <section className="analysis-details">
-              <h3>Action plan</h3>
-              {selectedReport.report.actionPlan.map((action) => (
-                <div key={`${action.priority}-${action.title}`}>
-                  <strong>{action.priority}. {action.title} · {action.impact}</strong>
-                  <p>{action.details} {action.timeEstimate ? `(${action.timeEstimate})` : ''}</p>
-                </div>
-              ))}
-            </section>
+            <div className="ah-section">
+              <h4>Action plan</h4>
+              <div>
+                {selectedReport.report.actionPlan.map((action) => (
+                  <div className="ah-entry" key={`${action.priority}-${action.title}`}>
+                    <p><strong>{action.priority}. {action.title} · {action.impact}</strong></p>
+                    <p>{action.details} {action.timeEstimate ? `(${action.timeEstimate})` : ''}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : null}
-        </div>
+        </section>
       ) : null}
     </div>
   )

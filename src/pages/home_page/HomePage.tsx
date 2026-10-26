@@ -146,7 +146,6 @@ export default function HomePage() {
 
   return (
     <div className="home-page-shell">
-        <FloatingNav navItems={navItems} />
       <header className="topbar">
         <div className="brand-mark">
           <div className="brand-dot" />
