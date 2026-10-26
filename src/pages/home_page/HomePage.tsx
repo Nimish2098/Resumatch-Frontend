@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IconHome, IconRoute, IconFileAnalytics, IconLogin } from '@tabler/icons-react'
-import { FloatingNav, type NavItem } from 'C:/NPC/ResuMatchFrontend/src/components/FloatingNav.tsx'
+import { FloatingNav, type NavItem } from '../../components/FloatingNav.tsx'
 
 
 const navItems: NavItem[] = [
